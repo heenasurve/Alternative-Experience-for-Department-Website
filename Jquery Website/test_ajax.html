@@ -1,0 +1,880 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="author" content="www.frebsite.nl" />
+        <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+
+        <title>IST at RIT - Alternative experience</title>
+
+        <!--Link Stylesheets-->
+        <link  href="css/style.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Roboto|Shrikhand|Oswald" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="Plugins/jsgrid-1.5.2/dist/jsgrid.css"/>
+        <link type="text/css" rel="stylesheet" href="Plugins/jsgrid-1.5.2/dist/jsgrid-theme.min.css" />
+        <link type="text/css" rel="stylesheet" href="Plugins/jQuery.mmenu-master/jQuery.mmenu-master/dist/css/jquery.mmenu.all.css"  />
+        <link type="text/css" rel="stylesheet" href="Plugins/jQuery.mmenu-master/jQuery.mmenu-master/dist/addons/drag/jquery.mmenu.drag.css" />
+        <link type="text/css" rel="stylesheet" href="Plugins/dsmorse-gridster.js-3613220/dist/jquery.gridster.css" />
+        <link type="text/css" rel="stylesheet" href="Plugins/featherlight-1.5.0/release/featherlight.min.css"/>
+        <link type="text/css" rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="Plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+
+        <!--Include Scripts-->
+        <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="Plugins/jQuery.mmenu-master/jQuery.mmenu-master/dist/js/jquery.mmenu.all.min.js"></script>
+        <script type="text/javascript" src="Plugins/jQuery.mmenu-master/jQuery.mmenu-master/dist/addons/fixedelements/jquery.mmenu.fixedelements.min.js"></script>
+        <script type="text/javascript" src="Plugins/dsmorse-gridster.js-3613220/dist/jquery.gridster.js"></script>
+        <script type="text/javascript" src="Plugins/jsgrid-1.5.2/dist/jsgrid.js"></script>
+        <script type="text/javascript" src="Plugins/featherlight-1.5.0/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="Plugins/jquery-backstretch-master/jquery.backstretch.min.js"></script>
+        <script type='text/javascript' src="Plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+
+        <script type="text/javascript">
+            /*jsgrid config for the coop table*/
+            function initializeCoop_table(data){
+                $("#cooptable").jsGrid({
+                    /*styling*/
+                    headercss:"color:orange",
+                    width: "90%",
+                    height: "500px",
+                    /*config*/
+                    inserting: false,
+                    editing: false,
+                    sorting: true,
+                    paging: true,
+                    /*data_source*/
+                    data: data,
+                    fields: [
+                        { name: "employer", title:"Employer", type: "text", width: 100,},
+                        { name: "degree",title:"Degree", type: "text", width: 50 },
+                        { name: "city",title:"City", type: "text", width: 150 },
+                        { name: "term",title:"Term", type: "text", width:50 },
+                        ]
+                });
+            }
+
+            /*jsgrid config for the coop table*/
+            function initializeEmployment_table(data){
+                $("#employmenttable").jsGrid({
+                    width: "90%",
+                    height: "500px",
+
+                    inserting: false,
+                    editing: false,
+                    sorting: true,
+                    paging: true,
+
+                    data: data,
+
+                    headercss:"color:orange",
+
+                    fields: [
+                        { name: "degree", title:"Degree",type: "text", width: 50 },
+                        { name: "employer",title:"Employer", type: "text", width: 100 },
+                        { name: "city",title:"City", type: "text", width: 75 },
+                        { name: "title", title:"Title",type: "text", width:50 },
+                        { name: "startDate",title:"Start date", type: "date", width:50 },
+
+                    ]
+                });
+            }
+
+            /*gridster config for the people section (professors and staff)*/
+            function initializePeople_grid() {
+                $(".gridster ul").gridster({
+                    widget_margins: [10, 10],
+                    widget_base_dimensions: [100, 100]
+                });
+
+            }
+
+            /*click on people/staff to display more information*/
+            function showInfoModal(current,type) {
+
+
+                if(type=='prof') {
+                    $("#profinfo" + current).removeClass("toggledisplay");
+                    var info = $("#profinfo" + current).html();
+                    var $dialog = $('<div>' + info + '</div>')
+
+                            .dialog({
+                                autoOpen: false,
+                                title: "Prof Info",
+                                width: 500,
+                                height: 300,
+                                modal: true,
+                            });
+
+                    $dialog.dialog('open');
+                    $("#profinfo" + current).addClass("toggledisplay");
+                    //return false;
+                }
+                if(type=='staff') {
+                    $("#staffinfo" + current).removeClass("toggledisplay");
+                    var info = $("#staffinfo" + current).html();
+                    var $dialog = $('<div>' + info + '</div>')
+
+                            .dialog({
+                                autoOpen: false,
+                                title: "Staff Info",
+                                width: 500,
+                                height: 300,
+                                modal: true,
+                            });
+
+                    $dialog.dialog('open');
+                    $("#staffinfo" + current).addClass("toggledisplay");
+                    //return false;
+                }
+            }
+
+            /*slide to the selected section on click of menu item*/
+            $(function() {
+                var $menu = $('nav#menu'),
+                        $html = $('html, body');
+
+                $menu.mmenu({
+                    dragOpen: true
+                });
+
+                var $anchor = false;
+                $menu.find( 'li > a' ).on(
+                        'click',
+                        function( e )
+                        {
+                            $anchor = $(this);
+                        }
+                );
+
+                var api = $menu.data( 'mmenu' );
+                api.bind( 'closed',
+                        function()
+                        {
+                            if ( $anchor )
+                            {
+                                var href = $anchor.attr( 'href' );
+                                $anchor = false;
+
+                                //	if the clicked link is linked to an anchor, scroll the page to that anchor
+                                if ( href.slice( 0, 1 ) == '#' )
+                                {
+                                    $html.animate({
+                                        scrollTop: $( href ).offset().top
+                                    });
+                                }
+                            }
+                        }
+                );
+            });
+
+            /*makes an AJAX request to resource passed to return JSON on success*/
+            function myXhr(t, d, id){
+                return $.ajax({
+                    type:t,
+                    url:'proxy.php',
+                    dataType:'json',
+                    data:d,
+                    cache:false,
+                    async:true,
+
+                    beforeSend:function(){
+                        $(id).append('<img src="assets/spinner.gif" class="spin"/>');
+                    }
+                }).always(function(){
+                    $(id).find('.spin').fadeOut(5000,function(){
+                        $(this).remove();
+                    });
+                }).fail(function(){
+                    console.log("There was a problem while trying to get data at " + d);
+                });
+            }
+
+            /*On DOCUMENT READY - setup menu and get data for all sections using AJAX*/
+            $(document).ready(function()
+            {
+                /*setup heirarchical menu*/
+                $("#menu").mmenu();
+
+                myXhr('get', {path: '/about/'}, '#about').done(function (json) {
+                    var x = '<div style="width: 80%;height: auto;background-color: whitesmoke;opacity:0.85;padding:10px;margin: 0 auto;"><h1 padding-bottom: 50px">INFORMATION SCIENCES AND <br/>TECHNOLOGIES</h1>';
+                    x += '<p><h2>' + json.title + '</h2><hr style="width: 50%;">';
+                    x += '<p class="about_text">'+json.description+'</p>';
+                    x += "<blockquote>" + json.quote + "</blockquote>";
+                    x += "~"+json.quoteAuthor + "</p></div>";
+                    $('#about').html(x);
+                    $('#about').backstretch("assets/webtech.png");
+                });
+
+                myXhr('get', {path: '/degrees/'}, '#degrees').done(function (json) {
+                    $.each(json.undergraduate, function (i, item) {
+                        var icon= '';
+                        if(item.degreeName=='wmc'){icon='<i class="fa fa-globe fa-2x"></i>';}
+                        if(item.degreeName=='hcc'){icon='<i class="fa fa-hand-paper-o fa-2x"></i>';}
+                        if(item.degreeName=='cit'){icon='<i class="fa fa-laptop fa-2x"></i>';}
+                        $('#degreesrow_ug').append(
+                                '<div class="degree" id=' + item.degreeName + '>'+icon + '<span style="margin-right:10px"></span>'+item.title + '</div>'
+                        );
+                    });
+                    $.each(json.undergraduate, function (i, item) {
+                        $('#' + item.degreeName).click(function () {
+                            var x = "";
+                            var list = [];
+                            var x_list = '';
+                            $.each(item.concentrations, function (i, conc) {
+                                list.push(conc);
+                                x_list += '<li style="list-style: none">' + conc + '</li>'
+                            });
+                            $('#hiddeninfo_ug').hide();
+                            //$('#hiddeninfo').style.display='inline-block';
+                            $("#hiddeninfo_ug").slideDown("slow");
+                            x += '<p>' + item.description + '</p>';
+                            x += '<ul>' + x_list + '</ul>';
+                            $("#hiddeninfo_ug").html(x);
+                        });
+                    });
+                    $.each(json.graduate, function (i, item) {
+                        if (!(item.degreeName==='graduate advanced certificates')) {
+                            var icon='';
+                            if(item.degreeName=='ist'){icon='<i class="fa fa-keyboard-o fa-2x"></i>';}
+                            if(item.degreeName=='hci'){icon='<i class="fa fa-user fa-2x"></i>';}
+                            if(item.degreeName=='nsa'){icon='<i class="fa fa-server fa-2x"></i>';}
+                            $('#degreesrow_g').append(
+                                    '<div class="degree" id=' + item.degreeName + '>'+ icon + '<span style="margin-right:10px"></span>' + item.title + '</div>'
+                            );
+                        }
+                        $.each(json.graduate, function (i, item) {
+                            if (!(item.degreeName === 'graduate advanced certificates')) {
+                                $('#' + item.degreeName).click(function () {
+                                    var x = "";
+                                    var list = [];
+                                    var x_list = '';
+                                    $.each(item.concentrations, function (i, conc) {
+                                        list.push(conc)
+                                        x_list += '<li style="list-style: none">' + conc + '</li>'
+                                    });
+                                    $('#hiddeninfo_g').hide();
+                                    //$('#hiddeninfo').style.display='inline-block';
+                                    $("#hiddeninfo_g").slideDown("slow");
+                                    x += '<p>' + item.description + '</p>';
+                                    x += '<ul>' + x_list + '</ul>';
+                                    $("#hiddeninfo_g").html(x);
+                                });
+                            }
+                        });
+                    });
+                    $.each(json.graduate,function(i,item){
+                        if (item.degreeName==='graduate advanced certificates') {
+                            $('#degreesrow_conc').append(
+                                    '<div class="degree" id="graduate_advanced_certificates">Graduate Advanced Certificates</div>'
+                            );
+                        }
+                        if(item.degreeName==='graduate advanced certificates'){
+                            $('#graduate_advanced_certificates').click(function () {
+                                var x = "";
+                                var list = [];
+                                var x_list = '';
+                                $.each(item.availableCertificates, function (i, certificate) {
+                                    list.push(certificate);
+                                    x_list += '<li style="list-style: none">' + certificate + '</li>'
+                                });
+                                $('#hiddeninfo_conc').hide();
+                                $("#hiddeninfo_conc").slideDown("slow");
+                                x += '<ul>' + x_list + '</ul>';
+                                $("#hiddeninfo_conc").html(x);
+                            });
+                        }
+                    });
+                    $('.degree').mouseover(function(){
+                        $('.degree').removeClass('hover');
+                        $(this).addClass('hover');
+                    });
+
+                });
+
+                myXhr('get', {path: '/minors/'}, '#minors').done(function (json) {
+                    var list_of_courses=[];
+                    var x = '';
+                    var y='';
+                    var div = '';
+
+                    $.each(json.UgMinors,function(i,item) {
+                        $.each(item.courses, function (i, course) {
+
+                            var coursedata = '';
+                            var divs = '';
+                            myXhr('get', {path: '/course/courseID=' + course}, '#courses').done(function (courseinfo) {
+                                div = '<div class="toggledisplay" id="coursecontent' + course + '"></div>';
+                                $("#coursecontent"+course).html('<h1 style="font-weight: bold">'+courseinfo.title+'</h1><hr>');
+                                $("#coursecontent"+course).append('<p>'+courseinfo.description+'</p>');
+                                $("#courses").append(div);
+                            });
+
+                        });
+                    });
+                    $.each(json.UgMinors,function(i,item) {
+                        var icon='';
+                        if(item.name=='MEDINFO-MN'){icon='<i class="fa fa-medkit fa-2x"></i>';}
+                        if(item.name=='DBDDI-MN'){icon='<i class="fa fa-database fa-2x"></i>';}
+                        if(item.name=='MDDEV-MN'){icon='<i class="fa fa-code fa-2x"></i>';}
+                        if(item.name=='GIS-MN'){icon='<i class="fa fa-map-marker fa-2x"></i>';}
+                        if(item.name=='MDEV-MN'){icon='<i class="fa fa-mobile fa-2x"></i>';}
+                        if(item.name=='WEBD-MN'){icon='<i class="fa fa-html5 fa-2x"></i>';}
+                        if(item.name=='WEBDD-MN'){icon='<i class="fa fa-object-group fa-2x"></i>';}
+                        if(item.name=='NETSYS-MN'){icon='<i class="fa fa-sitemap fa-2x"></i>';}
+                        i
+                        $('#minorscol').append(
+                                '<div class="minor" id=' + item.name + '>' +icon + '<span style="margin-right:10px"></span>'+item.title + '</div>' + '<div style="width: 40%;display: inline-block"><p>' + item.description + '</p><hr style="width: 50%;"></div>'
+                        );
+
+                        x='<p><span style="margin-right: 10px">Courses</span>';
+                        $.each(item.courses, function (i, course) {
+                            $("#coursecontent" + course).removeClass("toggledisplay");
+                            x+= '<span style="margin-right: 10px"><a href="#" style="text-decoration:none;color:darkorange;font-weight: bold;" data-featherlight="#coursecontent' + course + '">' + course + '</a></span>';
+                            $("#coursecontent" + course).addClass("toggledisplay");
+                        });
+                        $('#minorscol').append(x);
+                        $('#minorscol').append('</p>');
+                    });
+
+                });
+
+                myXhr('get', {path: '/people/'}, '#people').done(function (json) {
+
+                    var x='';
+                    var y = '';
+                    var facultyresearch='';
+                    var mycol=1;
+                    var myrow =1;
+                    var people ='prof';
+
+                    x+='<div class="gridster"><ul>';
+
+                    $.each(json.faculty, function (i, item) {
+
+
+                        if(mycol<=9) {
+
+                            x +='<li onclick="showInfoModal('+i+',\''+people+'\')" class="prof" data-row="'+myrow+'" data-col="'+mycol+'" data-sizex="2" data-sizey="1">';
+                            /* x +='<div style="background:url(' + item.imagePath + '); ">'+item.name+'</div></li>';*/
+                            x+='<div><img class ="profimage" src="' + item.imagePath +'"/>'+'<span style="color: white">'+item.name+'</span>';
+                            x+='<p style="font-weight: bold;color:white;">' + item.title + '</p>';
+                            x+='</div></li>';
+                            y+='<div class="toggledisplay" id="profinfo'+i+'">';
+                            if(item.office) {
+                                y += '<p><span style="font-weight: bold">Office:</span><span>' + item.office + '</span></p>';
+                            }
+                            if(item.phone) {
+                                y += '<p><span style="font-weight: bold">Phone:</span><span>' + item.phone + '</span></p>';
+                            }
+                            if(item.email) {
+                                y += '<p><span style="font-weight: bold">Email:</span><span>' + item.email + '</span></p>';
+                            }
+                            if(item.website){
+                                y+='<p><span style="font-weight: bold">Website:</span><span>' + item.website + '</span></p>';
+                            }
+                            if(item.twitter){
+                                y+='<p><span style="font-weight: bold">twitter:</span><span>' + item.twitter + '</span></p>';
+                            }
+                            if(item.facebook){
+                                y+='<p><span style="font-weight: bold">facebook:</span><span>' + item.facebook + '</span></p>';
+                            }
+                            myXhr('get',{path:'/research/byFaculty/'+item.username},'#people').done(function(researchJson) {
+                                var researchByFaculty = researchJson;
+
+                                    $.each(researchByFaculty, function (j, research_entry) { //because the API returns an array
+                                        y += '<p><span style="font-weight: bold">Research:</span></p>';
+                                        $.each(research_entry.citations, function (k, citation) {
+                                            y += '<p>' + citation + '</p>';
+                                        });
+                                    });
+
+                            });
+                            y+='</div>';
+                            mycol++;
+                        }else{
+                            myrow++;
+                            mycol=1;
+                            x +='<li onclick="showInfoModal('+i+',\''+people+'\')" class="prof" data-row="'+myrow+'" data-col="'+mycol+'" data-sizex="2" data-sizey="1">';
+                            /* x +='<div style="background:url(' + item.imagePath + '); ">'+item.name+'</div></li>';*/
+                            x+='<div><img class ="profimage" src="' + item.imagePath +'"/>'+item.name;
+                            x+='<p style="font-weight: bold;color:white;">' + item.title + '</p>';
+                            x+='</div></li>';
+                            y+='<div class="toggledisplay" id="profinfo'+i+'">';
+                            if(item.office) {
+                                y += '<p><span style="font-weight: bold">Office:</span><span>' + item.office + '</span></p>';
+                            }
+                            if(item.phone) {
+                                y += '<p><span style="font-weight: bold">Phone:</span><span>' + item.phone + '</span></p>';
+                            }
+                            if(item.email) {
+                                y += '<p><span style="font-weight: bold">Email:</span><span>' + item.email + '</span></p>';
+                            }
+                            if(item.website){
+                                y+='<p><span style="font-weight: bold">Website:</span><span>' + item.website + '</span></p>';
+                            }
+                            if(item.twitter){
+                                y+='<p><span style="font-weight: bold">twitter:</span><span>' + item.twitter + '</span></p>';
+                            }
+                            if(item.facebook){
+                                y+='<p><span style="font-weight: bold">facebook:</span><span>' + item.facebook + '</span></p>';
+                            }
+                            myXhr('get',{path:'/research/byFaculty/'+item.username},'#people').done(function(researchJson) {
+                                var researchByFaculty = researchJson;
+
+                                $.each(researchByFaculty, function (j, research_entry) { //because the API returns an array
+                                    y += '<p><span style="font-weight: bold">Research:</span></p>';
+                                    $.each(research_entry.citations, function (k, citation) {
+                                        y += '<p>' + citation + '</p>';
+                                    });
+                                });
+
+                            });
+                            y+='</div>';
+                        }
+
+
+                    });
+
+                    x+='</ul></div>';
+                    $('#people').append(x);
+                    $('#people').append(y);
+                    //initializePeople_grid();
+
+                    x='';
+                    y = '';
+                    mycol=1;
+                    myrow =1;
+                    people='staff';
+                    $('#people').append(
+                            '<h2 class="section_header">Staff</h2>'
+                    );
+                    x+='<div class="gridster"><ul>';
+                    $.each(json.staff, function (i, item) {
+                        if(mycol<=6) {
+                            x +='<li onclick="showInfoModal('+i+',\''+people+'\')" class="prof" data-row="'+myrow+'" data-col="'+mycol+'" data-sizex="2" data-sizey="1">';
+                            /* x +='<div style="background:url(' + item.imagePath + '); ">'+item.name+'</div></li>';*/
+                            x+='<div><img class ="profimage" src="' + item.imagePath +'"/>'+item.name;
+                            x+='<p style="font-weight: bold;color:white;">' + item.title + '</p>';
+                            x+='</div></li>';
+                            y+='<div class="toggledisplay" id="staffinfo'+i+'">';
+                            if(item.office) {
+                                y += '<p><span style="font-weight: bold">Office:</span><span>' + item.office + '</span></p>';
+                            }
+                            if(item.phone) {
+                                y += '<p><span style="font-weight: bold">Phone:</span><span>' + item.phone + '</span></p>';
+                            }
+                            if(item.email) {
+                                y += '<p><span style="font-weight: bold">Email:</span><span>' + item.email + '</span></p>';
+                            }
+                            if(item.website){
+                                y+='<p><span style="font-weight: bold">Website:</span><span>' + item.website + '</span></p>';
+                            }
+
+                            y+='</div>';
+                            mycol++;
+                        }else{
+                            myrow++;
+                            mycol=1;
+                        }
+                    });
+                    x+='</ul></div>';
+                    $('#people').append(x);
+                    $('#people').append(y);
+                    initializePeople_grid();
+                });
+
+                myXhr('get', {path: '/employment/'}, '#employment').done(function (json) {
+                    var x='';
+                    var y='';
+
+                    /*x+='<div style="height:30px"><p style="font-weight:bold; font-size:x-large; color:darkorange">'+json.introduction.title+'</p></div>';*/
+                    x+='<div style="overflow: hidden; padding-bottom: 20px"><div style="width: 40%; float:left;"><p style="font-weight: bold;margin-left:20px;font-size:22px; ">'+json.introduction.content[0].title+'</p><hr style="width: 30%">';
+                    x+='<p style="font-size:20px">'+json.introduction.content[0].description+'</p>';
+                    x+='</div>';
+                    x+='<div style="width:20%;float:left"></div>';
+                    x+='<div style="width: 40%;float:right;"><p style="font-weight:bold; margin-left:20px;font-size: 22px ">'+json.introduction.content[1].title+'</p><hr style="width: 30%;">';
+                    x+='<p style="font-size:20px">'+json.introduction.content[1].description+'</p>';
+                    x+='</div></div>';
+
+                    x+='<div style="width: 50%; float:left;"><p style="font-weight:bold; font-size: 22px; margin-left:20px ">Employers</p><hr style="width: 30%;">';
+                    x+='<ul>';
+                    $.each(json.employers.employerNames, function(i,item) {
+                        x += '<li style="list-style-type:none;color: darkorange;font-weight: bold; font-size: 20px">'+item+'</li>'
+                    });
+                    x+='</ul></div>';
+                    x+='<div style="width: 50%; float:left;"><p style="font-weight:bold;font-size: 22px; margin-left:20px ">Careers</p><hr style="width: 30%;">';
+                    x+='<ul>';
+                    $.each(json.careers.careerNames, function(i,item){
+                        x+='<li style="list-style-type:none;color: darkorange;font-weight: bold; font-size: 20px">'+item+'</li>'
+                    });
+                    x+='</ul></div>';
+                    x+='<div style="margin:auto;width:100%; padding:3%">';
+                    $.each(json.degreeStatistics.statistics,function(i,item){
+                        x+='<div style="float:left;height:150px;width:23%;margin:5px;background-color:#e63900;margin-bottom:50px"><div style="position: relative;top: 50%;transform: translateY(-50%);"><span style="color:floralwhite;font-size:x-large;">'+item.value+'</span>';
+                        x+='<p style="color: ghostwhite; font-size: medium">'+item.description+'</p></div></div>'
+                    });
+                    x+='</div>';
+                    $('#employment_desc').append(x);
+
+                    y+='<br><div style="height:60px;margin:0 auto;width:90%;background-color: #2b2b2b;color:#e63900"><p class="section_header" style="align:center;line-height: 60px ">'+json.coopTable.title+'</p></div>';
+                    y+='<div id="cooptable" style="margin:0 auto;"></div>';
+
+                    y+='<div style="height:60px;margin:0 auto;width:90%;background-color: #2b2b2b; "><p class="section_header" style="align:center;line-height: 60px">'+json.employmentTable.title+'</p></div>';
+                    y+='<div id="employmenttable" style="margin:0 auto"></div>';
+
+                    $('#employment_tables').append(y);
+
+                    initializeCoop_table(json.coopTable.coopInformation);
+                    initializeEmployment_table(json.employmentTable.professionalEmploymentInformation);
+                });
+
+                myXhr('get', {path: '/research/'}, '#research').done(function (json) {
+                    var x='';
+                    var y='';
+                    var icon='';
+                    $.each(json.byInterestArea,function(i,item){
+                        y='<div class="toggledisplay" id="byinterest'+i+'">';
+                        y+='<p style="font-weight: bold; font-size: large">'+item.areaName+'</p><hr>';
+                        $.each(item.citations,function(j,item){
+                            y+='<p>'+item+'</p>';
+                        });
+                        y+='</div>';
+                        $('#researchdata').append(y);
+                    });
+                    x='<p>';
+                    $.each(json.byInterestArea,function(i,item){
+                        $("#byinterest"+i).removeClass("toggledisplay");
+                        if(item.areaName=='Analytics'){icon='<i class="fa fa-gg fa-2x"></i>';}
+                        if(item.areaName=='Database'){icon='<i class="fa fa-database fa-2x"></i>';}
+                        if(item.areaName=='Education'){icon='<i class="fa fa-pencil-square-o fa-2x"></i>';}
+                        if(item.areaName=='Geo'){icon='<i class="fa fa-map-marker fa-2x"></i>';}
+                        if(item.areaName=='HCI'){icon='<i class="fa fa-user fa-2x"></i>';}
+                        if(item.areaName=='Health Informatics'){icon='<i class="fa fa-heartbeat fa-2x"></i>';}
+                        if(item.areaName=='Mobile'){icon='<i class="fa fa-mobile fa-2x"></i>';}
+                        if(item.areaName=='Networking'){icon='<i class="fa fa-sitemap fa-2x"></i>';}
+                        if(item.areaName=='Programming'){icon='<i class="fa fa-file-o fa-2x"></i>';}
+                        if(item.areaName=='System Administration'){icon='<i class="fa fa-server fa-2x"></i>';}
+                        if(item.areaName=='Ubiquitous Computing'){icon='<i class="fa fa-caret-square-o-right fa-2x"></i>';}
+                        if(item.areaName=='Web'){icon='<i class="fa fa-object-group fa-2x"></i>';}
+                        x +='<a href="#" style="text-decoration: none; font-size: larger;" class="research_area researcharea" data-featherlight="#byinterest'+i+'">' +icon +'<span style="margin-right:10px"></span>' + item.areaName + '</a>';
+                        $("#byinterest"+i).addClass("toggledisplay");
+                    });
+                    $('#research').append(x);
+                    $('#research').append('</p>');
+                    $('.researcharea').mouseover(function(){
+                        $('.researcharea').removeClass('hover');
+                        $(this).addClass('hover');
+                    });
+
+                });
+
+                myXhr('get', {path: '/resources/studyAbroad'},'#resources').done(function(json){
+                   var x ='';
+                   var y ='';
+
+
+                   y+='<div class="toggledisplay" id="studyAbroad">';
+                   y+='<p style="font-weight: bold; font-size: large">'+json.studyAbroad.title+'</p><hr>';
+                   y+='<blockquote>'+json.studyAbroad.description+'</blockquote>';
+                   $.each(json.studyAbroad.places,function (i,place) {
+                      y+='<p style="font-weight: bold">'+place.nameOfPlace+'</p>';
+                      y+='<p>'+place.description+'</p>';
+                   });
+                   y+='</div>';
+                   $('#resourcesdata').append(y);
+
+                    $('#studyAbroad').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#studyAbroad">'+json.studyAbroad.title+'</a>';
+                    $('#studyAbroad').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+
+                });
+
+                myXhr('get', {path:'/resources/forms'},'#resources').done(function(json){
+                    var x ='';
+                    var y ='';
+
+
+                    y+='<div class="toggledisplay" id="forms">';
+                    y+='<p style="font-weight: bold; font-size: x-large">Forms</p><hr>';
+                    y+='<p style="font-weight: bold; font-size: large">Graduate Forms</p><hr>';
+                    $.each(json.forms.graduateForms,function (i,form) {
+                        y+='<p><a style="text-decoration: none;color: darkorange" href="https://ist.rit.edu/'+form.href+'">'+form.formName+'</a></p>';
+                    });
+                    y+='<p style="font-weight: bold; font-size: large">Undergraduate Forms</p><hr>';
+                    $.each(json.forms.undergraduateForms,function (i,form) {
+                        y+='<p><a style="text-decoration: none;color: darkorange" href="https://ist.rit.edu/'+form.href+'">'+form.formName+'</a></p>';
+                    });
+                    y+='</div>';
+                    $('#resourcesdata').append(y);
+
+                    $('#forms').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#forms">Forms</a>';
+                    $('#forms').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+
+                });
+
+                myXhr('get',  {path:'/resources/coopEnrollment'},'#resources').done(function(json){
+                    var x ='';
+                    var y ='';
+
+
+                    y+='<div class="toggledisplay" id="coopenrollment">';
+                    y+='<p style="font-weight: bold; font-size: x-large">'+json.coopEnrollment.title+'</p><hr>';
+
+                    $.each(json.coopEnrollment.enrollmentInformationContent,function (i,item) {
+                        y+='<p style="font-weight: bold; font-size: large">'+item.title+'</p>';
+                        y+='<blockquote>'+item.description+'</blockquote>';
+                    });
+
+                    y+='</div>';
+                    $('#resourcesdata').append(y);
+
+                    $('#coopenrollment').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#coopenrollment">'+json.coopEnrollment.title+'</a>';
+                    $('#coopenrollment').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+                });
+
+                myXhr('get',  {path:'/resources/studentAmbassadors'},'#resources').done(function(json){
+                    var x ='';
+                    var y ='';
+
+
+                    y+='<div class="toggledisplay" id="studentAmbassadors">';
+                    y+='<p style="font-weight: bold; font-size: x-large">'+json.studentAmbassadors.title+'</p><hr>';
+
+                    $.each(json.studentAmbassadors.subSectionContent,function (i,item) {
+                        y+='<p style="font-weight: bold; font-size: large">'+item.title+'</p>';
+                        y+='<blockquote>'+item.description+'</blockquote>';
+                    });
+                    y+='<p style="text-align: center"><a style="text-decoration: none;color: darkorange;font-weight: bold;font-size: larger;" href="'+json.studentAmbassadors.applicationFormLink+'">Interested in being a student Ambassador?</a></p>';
+                    y+='<p style="font-size: small">'+json.studentAmbassadors.note+'</p>';
+                    y+='</div>';
+                    $('#resourcesdata').append(y);
+
+                    $('#studentAmbassadors').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#studentAmbassadors">'+json.studentAmbassadors.title+'</a>';
+                    $('#studentAmbassadors').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+                });
+
+                myXhr('get',  {path:'/resources/tutorsAndLabInformation'},'#resources').done(function(json){
+                    var x ='';
+                    var y ='';
+
+
+                    y+='<div class="toggledisplay" id="tutorsAndLabInformation">';
+                    y+='<p style="font-weight: bold; font-size: x-large">'+json.tutorsAndLabInformation.title+'</p><hr>';
+                    y+='<blockquote>'+json.tutorsAndLabInformation.description+'</blockquote>';
+                    y+='<p style="text-align: center"><a style="text-decoration: none;color: darkorange;font-weight: bold;font-size: larger;" href="'+json.tutorsAndLabInformation.tutoringLabHoursLink+'">Tutoring Lab Hours</a></p>';
+
+                    y+='</div>';
+                    $('#resourcesdata').append(y);
+
+                    $('#tutorsAndLabInformation').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#tutorsAndLabInformation">'+json.tutorsAndLabInformation.title+'</a>';
+                    $('#tutorsAndLabInformation').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+                    $('.student_resource').mouseover(function(){
+                        $('.student_resource').removeClass('hover');
+                        $(this).addClass('hover');
+                    });
+                });
+
+                myXhr('get',  {path:'/resources/studentServices'},'#resources').done(function(json){
+                    var x ='';
+                    var y ='';
+
+
+                    y+='<div class="toggledisplay" id="studentServices">';
+                    y+='<p style="font-weight: bold; font-size: x-large">'+json.studentServices.title+'</p><hr>';
+
+                    y+='<p style="font-weight: bold; font-size: large">'+json.studentServices.academicAdvisors.title+'</p>';
+                    y+='<blockquote>'+json.studentServices.academicAdvisors.description+'</blockquote>';
+                    y+='<p style="text-align: center"><a style="text-decoration: none;color: darkorange;font-weight: bold;font-size: larger;" href="'+json.studentServices.academicAdvisors.faq.contentHref+'">'+json.studentServices.academicAdvisors.faq.title+'</a></p>';
+
+                    y+='<p style="font-weight: bold; font-size: large">'+json.studentServices.professonalAdvisors.title+'</p><blockquote>';
+                    $.each(json.studentServices.professonalAdvisors.advisorInformation,function(i,advisor){
+                        y+='<p style="font-weight: bold; font-size: large;color: darkorange;">'+advisor.name+'</p>';
+                        y+='<p>'+advisor.department+'</p>';
+                        y+='<p>'+advisor.email+'</p>';
+                    });
+                    y+='</blockquote>';
+
+                    y+='<p style="font-weight: bold; font-size: large">'+json.studentServices.facultyAdvisors.title+'</p>';
+                    y+='<blockquote>'+json.studentServices.facultyAdvisors.description+'</blockquote>';
+
+                    y+='<p style="font-weight: bold; font-size: large">'+json.studentServices.istMinorAdvising.title+'</p><blockquote>';
+                    $.each(json.studentServices.istMinorAdvising.minorAdvisorInformation,function(i,minor){
+                        y+='<p style="font-weight: bold; font-size: large;color: darkorange;">'+minor.title+'</p>';
+                        y+='<p>'+minor.advisor+'</p>';
+                        y+='<p>'+minor.email+'</p>';
+                    });
+                    y+='</blockquote></div>';
+                    $('#resourcesdata').append(y);
+
+                    $('#studentServices').removeClass("toggledisplay");
+                    x +='<a href="#" style="text-decoration: none; font-size: larger;" class="student_resource" data-featherlight="#studentServices">'+json.studentServices.title+'</a>';
+                    $('#studentServices').addClass("toggledisplay");
+                    $('#resources').append(x);
+
+                });
+
+                myXhr('get',  {path:'/footer/'},'#footer').done(function(json){
+                    var x = '';
+                    x+='<div style="padding-top: 30px">';
+                    x+='<div style="width: 20%;height: 100%;float:left">';
+
+                    x+='<ul>';
+                    $.each(json.quickLinks,function(i,item){
+                        x+='<li style="list-style: none; margin-bottom: 20px;"><a style="text-decoration: none;color: darkorange; font-weight: bold; font-size: larger" href="'+item.href+'">'+item.title+'</a></li>';
+                    });
+                    x+='</ul></div>';
+                    x+='<div id="copyright" style="width:60%;float: left;text-align: center; color: darkorange; height:100%; font-size: large"></div>';
+                    var y =  json.copyright.html;
+                    var z = '<div style="padding-top: 60px">'+y+'</div>';
+                    x+='<div id="social" style="width: 20%;height: 100%;float:left;">'+'<p style="color: darkorange;font-weight: bold; font-size: larger">'+json.social.title+'</p>';
+                    x+='<blockquote style="color: darkorange">'+json.social.tweet+'</blockquote><p style="color: darkorange">'+json.social.by+'</p>';
+                    x+='<p><a href="'+json.social.twitter+'"><i class="fa fa-twitter fa-2x" style="color:deepskyblue"></i><span style="margin-left: 20px"></span></a>';
+                    x+='<a href="'+json.social.facebook+'"><i class="fa fa-facebook fa-2x" style="color:mediumblue"></i><span style="margin-left: 20px"></span></a></p>';
+
+                    $('#footer').append(x);
+                    $('#copyright').html(z);
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+
+
+    <div id="page">
+
+        <!--Header-->
+        <div class="header fixed">
+            <a href="#menu"><i class="fa fa-bars fa-2x"></i></a>
+            <p id="pagetitle">Information Sciences and Technologies Department @ RIT<p>
+        </div>
+
+        <!--Content-->
+        <div class="content">
+            <div id="about" class="section" style="text-align: center"></div>
+            <div class="section" id="degrees">
+                <div id="undergraduate">
+                    <h2 class="section_header" >Our Undergraduate Degrees</h2>
+                    <div  style="height: 210px">
+                        <div id="degreesrow_ug"></div>
+                        <div id="degreeinfo_ug">
+                            <div id="hiddeninfo_ug"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="graduate">
+                <h2 class="section_header">Our Graduate Degrees</h2>
+                <div style="height: 250px">
+                    <div id="degreesrow_g"></div>
+                    <div id="degreeinfo_g">
+                        <div id="hiddeninfo_g"></div>
+                    </div>
+                </div>
+                 </div>
+
+                <div id="advancedCert">
+                <h2 class="section_header">Our Graduate Advanced Certificates</h2>
+                <div  style="height: 210px">
+                    <div id="degreesrow_conc"></div>
+                    <div id="degreeinfo_conc">
+                        <div id="hiddeninfo_conc"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="section" id="minors">
+                <h2 class="section_header">Our Undergraduate Minors</h2>
+                <div>
+                    <div id="minorscol"></div>
+                    <div id="minorinfo">
+
+                    </div>
+                    <div id="coursecontent" ></div>
+                    <div id="hiddeninfo_minors"></div>
+
+                </div>
+
+            </div>
+            <div class="section" id="courses"></div>
+            <div class="section" id="people">
+                <h2 class="section_header">People</h2>
+            </div>
+            <div class="section" id="employment">
+                <h2 class="section_header">Employment</h2>
+                <div id="employment_desc"></div>
+                <div id="employment_tables">
+                    <h2 class="section_header">Where our students work </h2>
+                    <div style="overflow: hidden;height:400px;width:100%;padding:1%">
+                        <iframe style="width:100%;height:100%;top:0;bottom:0;border:0;margin-left:50px" src="https://ist.rit.edu/api/map"></iframe>
+                    </div>
+                </div>
+
+            </div>
+            <div  class="section" id="research">
+                <h2 class="section_header">Research</h2>
+            </div>
+            <div id="researchdata">
+            </div>
+            <div class="section" id="resources">
+                <h2 class="section_header">Student Resources</h2>
+            </div>
+            <div id="resourcesdata">
+            </div>
+            <div id="footer">
+
+            </div>
+        </div>
+
+        <!--Footer-->
+        <div class="footer fixed">
+        </div>
+
+        <!--Menu items-->
+        <nav id="menu">
+            <ul>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#degrees">Our Degrees</a>
+                    <ul>
+                        <li><a href="#graduate">Graduate</a></li>
+                        <li><a href="#undergraduate">Undergraduate</a></li>
+                        <li><a href="#advancedCert">Graduate Advanced Certificates</a></li>
+                        <li><a href="#minors">Minors</a></li>
+                    </ul>
+                </li>
+                <li><a href="#employment">Employment Statistics</a>
+                    <ul>
+                        <li><a href="#employment_desc">Career Information</a></li>
+                        <li><a href="#employment_tables">Career Locations</a></li>
+                    </ul>
+                </li>
+                <li><a href="#people">Our People and Research</a>
+                    <ul>
+                        <li><a href="#people">People</a></li>
+                        <li><a href="#research">Research by Interest Area</a></li>
+                    </ul>
+                </li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#footer">Copyright</a></li>
+            </ul>
+        </nav>
+    </div>
+
+
+
+    </body>
+    </html>

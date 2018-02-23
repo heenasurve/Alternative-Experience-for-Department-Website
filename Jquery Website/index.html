@@ -1,0 +1,193 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Test Ajax</title>
+<script src="https://code.jquery.com/jquery-latest.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+	//now what?
+	//api:  http://www.ist.rit.edu/api/
+	$(document).ready(function() {
+
+        //ist.rit.edu/api/about - About
+        myXhr('get', {path: '/about/'}, '#about').done(function (json) {
+            var x = "<h2>" + json.title + "</h2>";
+            x += "<p>" + json.description + "</p>";
+            x += "<p>" + json.quote + "</p>";
+            x += "<p>" + json.quoteAuthor + "</p>";
+            $('#about').html(x);
+        });
+
+        //Graduate Degrees
+        myXhr('get', {path: '/degrees/graduate/'}, '#content').done(function (json) {
+            $.each(json.graduate, function (i, item) {
+                //console.log($(this));
+                $('#content').append('<h2>' + item.title + '</h2>' + '<p>' + item.description + '</p>');
+            })
+        });
+
+        //People data
+        myXhr('get', {path: '/people/'}, '#people').done(function (json) {
+            var x = '';
+            $.each(json.faculty, function (i, item) {
+                //console.log($(this));
+                console.log(i);
+                console.log(item);
+                console.log($(this));
+
+                x += '<div data-username="' + item.username + '">';
+                x += '<h2>' + item.name + '</h2>' + '<p>' + item.tagline + '</p>';
+                x += '<img src="' + item.imagePath + '"/></div>"';
+            });
+            $('#people').html(x);
+        });
+
+    });
+        /*myXhr('get', {path: '/people/faculty/'}, "#faculty").done(function (json){
+            var x = '';
+            $.each(json.faculty,function(i,item){  //i is a counter/ item is the current element from each
+                //$(this) is the jquery equivalent of the this on which you can call jquery functions
+                x += '<h3 onclick="moreFac(this)" data-un="'+item.username+'">' + item.name + '</h3><p>'+ item.title+'</p>';
+                x +='<img src= '+item.imagePath+'</>';
+
+            });
+            $('#faculty').html(x);
+        });
+
+        function moreFac(dom){
+            var uname = $(dom).attr('data-un');
+            myXhr('get',{path:'/people/faculty/username=' + uname}).done(function(){
+
+            });
+        }
+    }
+*/
+
+    function myXhr(method, d, id) {
+        return $.ajax({
+            type: method,
+            url: 'proxy.php',
+            data : d,
+            dataType: 'json',  //ajax converts the string returned from the api to a JSON object
+            cache: false,
+            async: true,
+            beforeSend: function () {
+                //turn on spinner
+                $(id).append('<img src="assets/gears.gif" class=".spin">');
+            }
+        }).always(function () {
+            //stop spinner
+            $(id).find('.spin').fadeOut(5000, function () {
+                $(this).remove();
+            });
+        }).fail(function () {
+            console.log("Failure");
+        })
+    }
+
+</script>
+</head>
+<body>
+  <h2>IST Dept Site</h2>
+  <section id="about"></section>
+  <section id="people"></section>
+  <section id="content" ></section>
+  <section id="faculty"></section>
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Test Ajax</title>
+    <script src="https://code.jquery.com/jquery-latest.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        //now what?
+        //api:  http://www.ist.rit.edu/api/
+        $(document).ready(function(){
+            myXhr('get',{path:'/about/'},'#about').done(function(json){
+                var x="<h2>"+json.title+"</h2>";
+                x+="<p>"+json.description+"</p>";
+                x+="<p>"+json.quote+"</p>";
+                x+="<p>"+json.quoteAuthor+"</p>";
+                $('#about').html(x);
+                console.log('DOne');
+            });
+
+            myXhr('get',{path:'/degrees/undergraduate/'},'#content').done(function(json){
+                //got good data back in json
+                //dump out all of the degree titles
+                $.each(json.undergraduate,function(i, item){
+                    console.log($(this));
+                    //console.log(item.degreeName);
+                    $('#content').append('<h2>'+item.title+'</h2>'+'<p>'+item.description+'</p>');
+                });
+            });
+            myXhr('get',{path:'/people/'},'#people').done(function(json){
+                // do something...
+                var x='';
+                $.each(json.faculty,function(i, item){
+                    //item === this
+                    console.log(i);
+                    console.log(item);
+                    console.log($(this));
+                    x+='<div onclick="getFac(this)" data-username="'+item.username+'">';
+                    x+='<h2>'+item.name+'</h2><p>'+item.tagline+'</p>';
+                    x+='<img src="'+item.imagePath+'"/></div>';
+                });
+                $('#people').html(x);
+            });
+
+        });
+
+
+        function getFac(dom){
+            myXhr('get',{path:'/people/faculty/username='+$(dom).attr('data-username')},null).done(function(json){
+                console.log(json);
+            });
+        }
+        ///////////////////////////////////////////////////
+        //utilities...
+        //data - {path:'/about/'}
+        //(getOrPost, data, idForSpinner)
+        function myXhr(t, d, id){
+            return $.ajax({
+                type:t,
+                url:'proxy.php',
+                dataType:'json',
+                data:d,
+                cache:false,
+                async:true,
+                beforeSend:function(){
+                    //PLEASE - get your own spinner that 'fits' your site.
+                    $(id).append('<img src="assets/spinner.gif" class="spin"/>');
+                }
+            }).always(function(){
+                //kill spinner
+                $(id).find('.spin').fadeOut(5000,function(){
+                    console.log(d);
+                    $(this).remove();
+                });
+            }).fail(function(){
+                //handle failure
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+<h2>IST Dept Site</h2>
+<div id="people"></div>
+
+<div id="content" style="height:300px"></div>
+
+<div id="about" style="height:200px"></div>
+
+</body>
+</html>

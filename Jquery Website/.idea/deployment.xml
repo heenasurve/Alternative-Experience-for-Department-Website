@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData">
+    <serverData>
+      <paths name="BanjoServer">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/ISTE754/JqueryWebsite" local="$PROJECT_DIR$" web="/ISTE754/JqueryWebsite" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
